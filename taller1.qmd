@@ -1,0 +1,2275 @@
+---
+# INICIO
+title: "Distribuciones de Frecuencias"
+
+subtitle: "taller1"
+date: today
+author: 
+  - name: Santiago Botero<br>Alejandro Castro<br>Ciara Talero
+    affiliation: "Universidad del Tolima"
+    affiliation-url: "https://www.ut.edu.co/"
+lang: es
+
+# FORMATO PAGINA
+title-block-banner: "#3d9bba"
+
+format:
+  html:  # Formato de salida en HTML
+    page-layout: full  # Configura el diseño de la página para usar el ancho completo
+    fontsize: 14pt  # Tamaño de la fuente del documento (14 puntos)
+    toc: true  # Activa la tabla de contenido
+    toc-location: right  # Ubicación de la tabla de contenido (a la derecha)
+    number-sections: true  # Activa la numeración de las secciones
+    code-fold: true  # Permite ocultar el código, mostrando solo un resumen con "Ver código"
+    code-summary: "Ver código"  # El texto mostrado para los resúmenes de código oculto
+    html-math-method: katex  # Usa Katex para representar las fórmulas matemáticas en HTML
+    smooth-scroll: true  # Activa el desplazamiento suave al navegar por la página
+    link-external-icon: true  # Muestra un ícono en los enlaces externos
+    link-external-newwindow: true  # Los enlaces externos se abren en una nueva ventana
+    citations-hover: true  # Activa el efecto hover (desplegar) en las citas
+    footnotes-hover: true  # Activa el efecto hover (desplegar) en las notas al pie
+    theme: "dark"  # Opción de tema alternativo con mayor contraste
+    highlight-style: "Monokai"  # Resaltado de código con contraste
+    code-overflow: "scroll"  # Controla desbordamiento de código en pantallas pequeñas
+    favicon: "favicon.ico"  # Favicon para el sitio web
+    background-color: "#EDA698"  # Fondo azul baby para todo el documento
+    text-align: justify  # Alineación justificada para el texto
+    color: "#333333"  # Color del texto (gris oscuro para mejorar la legibilidad)
+    link-color: "#3892f8"  # Color de los enlaces (azul)
+    heading-color: "#3892f8"  # Color de los encabezados (azul)
+editor: visual  # Usa el editor visual para la creación del documento en RStudio
+knitr:
+  opts_chunk:  # Opciones predeterminadas para los bloques de código (chunks) de R
+    message: false  # Mostrar mensajes generados por el código
+    warning: false  # Mostrar advertencias si es necesario
+    fig.align: "center"  # Alinea las figuras generadas al centro
+    fig.width: 6  # Ajusta el tamaño de las figuras a 6 unidades
+    fig.height: 6  # Ajusta la altura de las figuras a 6 unidades
+    out.width: "70%"  # Asegura que las figuras se adapten al 70% del ancho disponible
+---
+
+```{=html}
+<div style="position: absolute; top: 10px; right: 10px;">
+  <img src="Logo_ut.png" alt="Logo Universidad del Tolima" style="width: 150px; height: auto;">
+</div>
+```
+
+```{=html}
+<style type="text/css">
+  body {
+    font-size: 130%;
+    text-align: justify;
+  }
+</style>
+```
+
+# .Cargar paquetes
+
+```{r}
+ipak <- function(pkg){
+  
+  # Definir repositorio CRAN (evita el error del mirror)
+  options(repos = c(CRAN = "https://cloud.r-project.org"))
+  
+  # Identificar paquetes instalados
+  installed <- rownames(installed.packages())
+  
+  # Identificar paquetes faltantes
+  new.pkg <- setdiff(pkg, installed)
+  
+  # Instalar paquetes faltantes
+  if(length(new.pkg) > 0){
+    install.packages(new.pkg, dependencies = TRUE)
+  }
+  
+  # Cargar paquetes sin mostrar mensajes
+  invisible(lapply(pkg, function(p){
+    suppressPackageStartupMessages(
+      library(p, character.only = TRUE)
+    )
+  }))
+}
+
+# Crear la lista de los paquetes a utilizar
+packages <- c("tidyverse", "kableExtra", "psych", "readxl")
+
+# Instalar y cargar los paquetes del listado anterior
+ipak(packages)
+```
+
+[@tidyverse; @kableExtra; @psych; @readxl]
+
+# .Introducción
+
+**Distribución de Frecuencias**
+
+**Concepto**
+
+Una **distribución de frecuencias** es una forma de **organizar, resumir y presentar datos estadísticos** mediante tablas que muestran el número de observaciones que pertenecen a cada categoría o intervalo de una variable.
+
+Formalmente, si se tiene un conjunto de datos:
+
+$$X={x_1, x_2, x_3, \dots , x_n}$$
+
+la distribución de frecuencias permite identificar **cuántas veces aparece cada valor o intervalo dentro del conjunto de datos**.
+
+Las distribuciones de frecuencias se utilizan para:
+
+-   Resumir grandes volúmenes de datos
+-   Identificar patrones en los datos
+-   Facilitar la construcción de gráficos estadísticos
+-   Calcular medidas estadísticas (media, varianza, etc.)
+
+**Elementos de una Distribución de Frecuencias**
+
+Una tabla de distribución de frecuencias generalmente contiene los siguientes elementos:
+
+| Elemento             | Descripción                          |
+|----------------------|--------------------------------------|
+| Clase o categoría    | Valores o intervalos de la variable  |
+| Frecuencia absoluta  | Número de veces que aparece un valor |
+| Frecuencia relativa  | Proporción del total                 |
+| Frecuencia acumulada | Suma progresiva de frecuencias       |
+| Marca de clase       | Punto medio del intervalo            |
+
+**Frecuencia Absoluta**
+
+La **frecuencia absoluta** indica cuántas veces aparece un valor o categoría en el conjunto de datos.
+
+Se denota por: $f_i$
+
+donde:
+
+-   
+
+    (i) representa la categoría o clase
+
+-   ($f_i$) es el número de observaciones en esa categoría
+
+La suma de todas las frecuencias absolutas es igual al tamaño de la muestra:
+
+$$\sum_{i=1}^{k} f_i = n$$
+
+donde:
+
+-   
+
+    (k) = número de clases
+
+-   
+
+    (n) = número total de observaciones
+
+**Frecuencia Relativa**
+
+La **frecuencia relativa** representa la proporción de datos que pertenecen a una categoría.
+
+$$h_i = \frac{f_i}{n}$$
+
+donde:
+
+-   ($h_i$) = frecuencia relativa
+-   ($f_i$) = frecuencia absoluta
+-   ($n$) = total de observaciones
+
+La suma de todas las frecuencias relativas es:
+
+$$\sum_{i=1}^{k} h_i = 1$$
+
+Si se expresa en porcentaje:
+
+$$h_{i}(\%) = \frac{f_{i}}{n} \times 100$$
+
+**Frecuencia Acumulada**
+
+La **frecuencia acumulada** corresponde a la suma progresiva de las frecuencias absolutas hasta una clase determinada.
+
+$$
+F_i = \sum_{j=1}^{i} f_j
+$$
+
+Propiedades:
+
+$$
+F_k = n
+$$
+
+La frecuencia acumulada permite responder preguntas como:
+
+-   ¿Cuántos datos son **menores o iguales** que cierto valor?
+
+**Frecuencia Relativa Acumulada**
+
+La **frecuencia relativa acumulada** se obtiene acumulando las frecuencias relativas:
+
+$$
+H_i = \sum_{j=1}^{i} h_j
+$$
+
+También puede calcularse como:
+
+$$
+H_i = \frac{F_i}{n}
+$$
+
+**Propiedad:**
+
+$$
+H_k = 1
+$$
+
+**Distribución de Frecuencias para Datos Agrupados**
+
+Cuando el conjunto de datos es grande, se agrupan en **intervalos o clases**.
+
+Un intervalo se define como:
+
+$$(L_i, L_s)$$
+
+donde:
+
+-   (Li) = límite inferior
+-   (Ls) = límite superior
+
+**Número de Clases (Regla de Sturges)**
+
+Para determinar el número adecuado de clases se usa frecuentemente la **regla de Sturges**:
+
+$$k = 1 + 3.322 \log\_{10}(n)$$
+
+donde:
+
+-   
+
+    (k) = número de clases
+
+-   
+
+    (n) = tamaño de la muestra
+
+**Amplitud de Clase**
+
+La **amplitud de clase** es el tamaño de cada intervalo.
+
+$$A = \frac{R}{k}$$
+
+donde:
+
+-   
+
+    (R) = rango de los datos
+
+-   
+
+    (k) = número de clases
+
+El rango se calcula como:
+
+$$R = X\_{max} - X\_{min}$$
+
+**Marca de Clase**
+
+La **marca de clase** es el punto medio del intervalo y se utiliza para cálculos estadísticos.
+
+$$x_i = \frac{L_i + L_s}{2}$$
+
+**Representaciones Gráficas**
+
+A partir de una distribución de frecuencias se pueden construir:
+
+-   **Histograma**
+-   **Polígono de frecuencias**
+-   **Ojiva (frecuencia acumulada)**
+-   **Gráfico de barras**
+-   **Gráfico circular**
+
+Estas representaciones permiten **visualizar la estructura de los datos y su distribución**.
+
+# .Bajar el Dataset
+
+[Base de datos deporte](https://docs.google.com/spreadsheets/d/10_iRbA3KHNs8x9H53i-0NitNIPofXnyL/edit?usp=sharing&ouid=100778128111291248332&rtpof=true&sd=true)
+
+# .Leer el Dataset
+
+```{r}
+deporte <- read_excel("deporte.xlsx")
+```
+
+# .Conocer el Dataset
+
+-   Mostrar algunas filas del dataset
+
+```{r}
+head(deporte)
+```
+
+-   Numero de variables
+
+```{r}
+deporte %>% names %>% length()
+```
+
+-   Nombres de las variables
+
+```{r}
+names(deporte)
+```
+
+-   Estructura de las variables
+
+```{r}
+glimpse(deporte)
+```
+
+-   Transformar las variables
+
+```{r}
+
+deporte$GENERO <- as.factor(deporte$GENERO)
+deporte$DEPORTE <- as.factor(deporte$DEPORTE)
+
+deporte$ESCOLARIDAD <- factor(deporte$ESCOLARIDAD, 
+                        levels = c("Primaria", "Secundaria", "Pregrado", "Posgrado"), ordered = TRUE)
+
+
+deporte$DESEMPEÑO <- factor(deporte$DESEMPEÑO, 
+                         levels = c("Bajo", "Medio", "Alto"), ordered = TRUE)
+
+```
+
+-   Nueva estructura de las variables
+
+```{r}
+glimpse(deporte)
+```
+
+# .Tablas y Graficas
+
+## .Variable Nominal
+
+::: callout-warning
+La variable nominal tiene solo frecuencia absoluta, relativa y porcentaje
+:::
+
+**Análisis de frecuencias del género de los encuestados**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+# Crear la tabla original
+tabla <- tibble(Genero = deporte$GENERO) %>% 
+  group_by(Genero) %>% 
+  summarise(fi = n()) %>%
+  mutate(
+    hi = round(fi/sum(fi), 4), 
+    Porcentaje = paste0(hi*100, "%"),)
+
+# Convertir las columnas a character para evitar conflictos
+tabla <- tabla %>% mutate(
+  Genero = as.character(Genero))
+
+# Añadir la fila de totales
+totales <- tibble(
+  Genero = "Total",
+  fi = sum(tabla$fi),
+  hi = round(sum(tabla$hi), 4),
+  Porcentaje = paste0(round(sum(tabla$hi) * 100, 2), "%"))
+
+# Combinar la tabla con los totales
+tabla_final <- bind_rows(tabla, totales)
+
+# Mostrar la tabla final con kable
+tabla_final %>% 
+  knitr::kable(
+    col.names = c("Genero", "$f_i$", "$h_i$", "Porcentaje"), 
+    align = c("l", "c", "c", "c"))
+```
+
+## Barras
+
+```{r}
+# Cargar las librerías necesarias
+library(ggplot2)
+library(dplyr)
+library(readxl)
+
+
+# Calcular los porcentajes de cada categoría en la variable GENERO
+genero_counts <- deporte %>%
+  dplyr::count(GENERO) %>%
+  mutate(porcentaje = n / sum(n) * 100)
+
+# Crear el diagrama de barras
+ggplot(genero_counts, aes(x = GENERO, y = porcentaje, fill = GENERO)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Distribución porcentual del genero de los encuestados", 
+       x = "Genero", 
+       y = "Porcentaje") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  geom_text(aes(label = sprintf("%.1f%%", porcentaje)), 
+            vjust = -0.5, 
+            color = "black", 
+            size = 3.5)
+```
+
+## Sectores
+
+```{r}
+# Cargar las librerías necesarias
+library(ggplot2)
+library(dplyr)
+library(readxl)
+
+
+
+# Calcular los porcentajes de cada categoría en la variable GENERO
+genero_counts <- deporte %>%
+  dplyr::count(GENERO) %>%
+  mutate(porcentaje = n / sum(n) * 100)
+
+# Crear el diagrama circular
+ggplot(genero_counts, aes(x = "", y = porcentaje, fill = GENERO)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  labs(title = "Distribución porcentual del genero de los encuestados") +
+  theme_minimal() +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        panel.grid = element_blank(),
+        axis.text.x = element_blank()) +
+  geom_text(aes(label = sprintf("%.1f%%", porcentaje)), 
+            position = position_stack(vjust = 0.5), 
+            color = "white", 
+            size = 4)
+```
+
+## Interpretación
+
+La tabla muestra la distribución de una muestra de 200 personas según su género:
+
+Femenino: 93 personas (46.5%)
+Masculino: 107 personas (53.5%)
+
+Hay una ligera mayoría de hombres en la muestra, aunque la diferencia no es grande (solo 14 personas más). En general, la distribución está bastante equilibrada entre ambos géneros.
+:::
+
+<br>
+
+**Análisis de frecuencias del deporte que más se práctica**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+# Crear la tabla original
+tabla <- tibble(Deporte = deporte$DEPORTE) %>% 
+  group_by(Deporte) %>% 
+  summarise(fi = n()) %>%
+  mutate(
+    hi = round(fi/sum(fi), 4), 
+    Porcentaje = paste0(hi*100, "%"),)
+
+# Convertir las columnas a character para evitar conflictos
+tabla <- tabla %>% mutate(
+  Deporte = as.character(Deporte))
+
+# Añadir la fila de totales
+totales <- tibble(
+  Deporte = "Total",
+  fi = sum(tabla$fi),
+  hi = round(sum(tabla$hi), 4),
+  Porcentaje = paste0(round(sum(tabla$hi) * 100, 2), "%"))
+
+# Combinar la tabla con los totales
+tabla_final <- bind_rows(tabla, totales)
+
+# Mostrar la tabla final con kable
+tabla_final %>% 
+  knitr::kable(
+    col.names = c("Deporte", "$f_i$", "$h_i$", "Porcentaje"), 
+    align = c("l", "c", "c", "c"))
+```
+
+## Barras
+
+```{r}
+# Cargar las librerías necesarias
+library(ggplot2)
+library(dplyr)
+library(readxl)
+
+
+# Calcular los porcentajes de cada categoría en la variable DEPORTE
+deporte_counts <- deporte %>%
+  dplyr::count(DEPORTE) %>%
+  mutate(porcentaje = n / sum(n) * 100)
+
+# Crear el diagrama de barras
+ggplot(deporte_counts, aes(x = DEPORTE, y = porcentaje, fill = DEPORTE)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Distribución porcentual del deporte", 
+       x = "Deporte", 
+       y = "Porcentaje") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  geom_text(aes(label = sprintf("%.1f%%", porcentaje)), 
+            vjust = -0.5, 
+            color = "black", 
+            size = 3.5)
+```
+
+## Sectores
+
+```{r}
+# Cargar las librerías necesarias
+library(ggplot2)
+library(dplyr)
+library(readxl)
+
+
+
+# Calcular los porcentajes de cada categoría en la variable ESCOLARIDAD
+deporte_counts <- deporte %>%
+  dplyr::count(DEPORTE) %>%
+  mutate(porcentaje = n / sum(n) * 100)
+
+# Crear el diagrama circular
+ggplot(deporte_counts, aes(x = "", y = porcentaje, fill = DEPORTE)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  labs(title = "Distribución porcentual del deporte") +
+  theme_minimal() +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        panel.grid = element_blank(),
+        axis.text.x = element_blank()) +
+  geom_text(aes(label = sprintf("%.1f%%", porcentaje)), 
+            position = position_stack(vjust = 0.5), 
+            color = "white", 
+            size = 4)
+```
+
+## Interpretación
+
+El deporte más practicado es baloncesto (36 personas, 18%).
+Le siguen natación (16%) y fútbol (15.5%).
+En un nivel intermedio están voleibol (14%) y gimnasia (13%).
+Los menos practicados son atletismo (12.5%) y tenis (11%).
+
+Esto nos muestra que hay una preferencia clara por el baloncesto, aunque en general los gustos están bastante distribuidos sin diferencias extremadamente grandes entre los deportes.
+:::
+
+<br>
+
+## .Variable Ordinal
+
+::: callout-tip
+La variable ordinal tiene los cuatro tipos de frecuencias
+:::
+
+**Distribución de frecuencias de los encuestados según el nivel de escolaridad**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+# Crear la tabla original
+tabla <- tibble(Escolaridad = deporte$ESCOLARIDAD) %>% 
+  group_by(Escolaridad) %>% 
+  summarise(fi = n()) %>%
+  mutate(
+    hi = round(fi/sum(fi), 4), 
+    Porcentaje = paste0(hi*100, "%"),
+    Fi = cumsum(fi),
+    Hi = cumsum(hi)
+  )
+
+# Convertir las columnas Fucion, Fi, y Hi a character para evitar conflictos
+tabla <- tabla %>% mutate(
+  Escolaridad = as.character(Escolaridad),
+  Fi = as.character(Fi),
+  Hi = as.character(Hi)
+)
+
+# Añadir la fila de totales, dejando Fi y Hi vacíos
+totales <- tibble(
+  Escolaridad = "Total",
+  fi = sum(tabla$fi),
+  hi = round(sum(tabla$hi), 4),
+  Porcentaje = paste0(round(sum(tabla$hi) * 100, 2), "%"),
+  Fi = "",  # Puedes dejar en blanco o usar un valor numérico
+  Hi = ""   # Puedes dejar en blanco o usar un valor numérico
+)
+
+# Combinar la tabla con los totales
+tabla_final <- bind_rows(tabla, totales)
+
+# Mostrar la tabla final con kable
+tabla_final %>% 
+  knitr::kable(
+    col.names = c("Nivel Escolaridad", "fi", "hi", "Porcentaje", "Fi", "Hi"), 
+    align = c("l", "c", "c", "c", "c", "c")
+  )
+```
+
+## Barras
+
+```{r}
+# Cargar las librerías necesarias
+library(ggplot2)
+library(dplyr)
+library(readxl)
+
+
+# Calcular los porcentajes de cada categoría en la variable DEPORTE
+escolaridad_counts <- deporte %>%
+  dplyr::count(ESCOLARIDAD) %>%
+  mutate(porcentaje = n / sum(n) * 100)
+
+# Crear el diagrama de barras
+ggplot(escolaridad_counts, aes(x = ESCOLARIDAD, y = porcentaje, fill = ESCOLARIDAD)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Distribución porcentual del nivel de escolaridad", 
+       x = "Nivel de Escolaridad", 
+       y = "Porcentaje") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  geom_text(aes(label = sprintf("%.1f%%", porcentaje)), 
+            vjust = -0.5, 
+            color = "black", 
+            size = 3.5)
+```
+
+## Interpretacion
+
+La muestra total es de 200 personas.
+El nivel educativo con mayor representación es posgrado (28%), seguido de pregrado (26.5%).
+Secundaria (23.5%) y primaria (22%) tienen menor participación, aunque siguen siendo proporciones importantes.
+La distribución es relativamente equilibrada, sin diferencias extremas entre categorías, pero con una ligera tendencia hacia niveles educativos más altos.
+El acumulado (Hi) muestra que:
+El 72% de la población tiene hasta nivel de pregrado.
+El 100% se completa al incluir posgrado.
+
+Predomina una población con formación media-alta, lo que podría influir en variables como conocimiento, acceso a información o desempeño según el contexto del estudio.
+:::
+
+**Distribución de frecuencias de los enccuestados según el desempeño en el deporte que práctica**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+# Crear la tabla original
+tabla <- tibble(Desempeño = deporte$DESEMPEÑO) %>% 
+  group_by(Desempeño) %>% 
+  summarise(fi = n()) %>%
+  mutate(
+    hi = round(fi/sum(fi), 4), 
+    Porcentaje = paste0(hi*100, "%"),
+    Fi = cumsum(fi),
+    Hi = cumsum(hi)
+  )
+
+# Convertir las columnas Fucion, Fi, y Hi a character para evitar conflictos
+tabla <- tabla %>% mutate(
+  Desempeño = as.character(Desempeño),
+  Fi = as.character(Fi),
+  Hi = as.character(Hi)
+)
+
+# Añadir la fila de totales, dejando Fi y Hi vacíos
+totales <- tibble(
+  Desempeño = "Total",
+  fi = sum(tabla$fi),
+  hi = round(sum(tabla$hi), 4),
+  Porcentaje = paste0(round(sum(tabla$hi) * 100, 2), "%"),
+  Fi = "",  # Puedes dejar en blanco o usar un valor numérico
+  Hi = ""   # Puedes dejar en blanco o usar un valor numérico
+)
+
+# Combinar la tabla con los totales
+tabla_final <- bind_rows(tabla, totales)
+
+# Mostrar la tabla final con kable
+tabla_final %>% 
+  knitr::kable(
+    col.names = c("Desempeño", "fi", "hi", "Porcentaje", "Fi", "Hi"), 
+    align = c("l", "c", "c", "c", "c", "c")
+  )
+```
+
+## Barras
+
+```{r}
+# Cargar las librerías necesarias
+library(ggplot2)
+library(dplyr)
+library(readxl)
+
+
+# Calcular los porcentajes de cada categoría en la variable DEPORTE
+desempeño_counts <- deporte %>%
+  dplyr::count(DESEMPEÑO) %>%
+  mutate(porcentaje = n / sum(n) * 100)
+
+# Crear el diagrama de barras
+ggplot(desempeño_counts, aes(x = DESEMPEÑO, y = porcentaje, fill = DESEMPEÑO)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Distribución porcentual del desempeño en el deporte", 
+       x = "Desempeño", 
+       y = "Porcentaje") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  geom_text(aes(label = sprintf("%.1f%%", porcentaje)), 
+            vjust = -0.5, 
+            color = "black", 
+            size = 3.5)
+```
+
+## Interpretacion
+
+El nivel de desempeño más frecuente es alto (36%), seguido de bajo (33.5%) y luego medio (30.5%).
+La distribución es bastante equilibrada, aunque con una ligera predominancia del desempeño alto.
+El acumulado indica que:
+El 64% de la población se encuentra entre desempeño bajo y medio.
+El 100% se completa al incluir el nivel alto.
+
+Aunque el desempeño alto es el más representativo, existe una proporción considerable de personas con desempeño bajo y medio, lo que sugiere variabilidad en los resultados y posibles oportunidades de mejora dentro del grupo.
+:::
+
+<br>
+
+## .Variable Discreta
+
+::: callout-warning
+La variable discreta tiene los cuatro tipos de frecuencias
+:::
+
+**Distribución de frecuencias de los encuestados según el número de prácticas en el deporte**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+# Crear la tabla original
+tabla <- tibble(Practicas = deporte$PRACTICAS) %>% 
+  group_by(Practicas) %>% 
+  summarise(fi = n()) %>%
+  mutate(
+    hi = round(fi/sum(fi), 4), 
+    Porcentaje = paste0(hi*100, "%"),
+    Fi = cumsum(fi),
+    Hi = cumsum(hi)
+  )
+
+# Convertir las columnas Personas, Fi, y Hi a character para evitar conflictos
+tabla <- tabla %>% mutate(
+  Practicas = as.character(Practicas),
+  Fi = as.character(Fi),
+  Hi = as.character(Hi)
+)
+
+# Añadir la fila de totales, dejando Fi y Hi vacíos
+totales <- tibble(
+  Practicas = "Total",
+  fi = sum(tabla$fi),
+  hi = round(sum(tabla$hi), 2),
+  Porcentaje = paste0(round(sum(tabla$hi) * 100, 2), "%"),
+  Fi = "",  # Puedes dejar en blanco o usar un valor numérico
+  Hi = ""   # Puedes dejar en blanco o usar un valor numérico
+)
+
+# Combinar la tabla con los totales
+tabla_final <- bind_rows(tabla, totales)
+
+# Mostrar la tabla final con kable
+tabla_final %>% 
+  knitr::kable(
+    col.names = c("N Practicas", "fi", "hi", "Porcentaje", "Fi", "Hi"), 
+    align = c("l", "r", "r", "r", "r", "r")
+  )
+
+```
+
+## Bastones
+
+```{r}
+# valores de la variable
+x <- c(1, 2, 3, 4, 5, 6, 7)
+# f.m.p.
+fx <- c(0.135, 0.130, 0.110, 0.165, 0.145, 0.165, 0.150)
+
+# Crear un dataframe con los datos
+df <- data.frame(x = x, fx = fx)
+
+# Gráfico con ggplot2
+ggplot(df, aes(x = x, y = fx)) +
+  geom_point(shape = 18, color = "red") +
+  geom_segment(aes(xend = x, yend = 0), size = 1, color = "blue") +
+  labs(x = "N Practicas", y = "Porcentaje", title = "Diagrama  de bastones") +
+  theme_minimal() +
+  geom_text(aes(label = fx), vjust = -0.5)
+```
+
+## Escalonado
+
+```{r}
+# Cargar librerías
+library(ggplot2)
+library(tibble)
+
+# Crear datos
+df <- tibble(
+  x = c(1, 2, 3, 4, 5, 6, 7),
+  Hi = c(0.135, 0.265, 0.375, 0.54, 0.685, 0.85, 1)
+)
+
+# Gráfica de función de distribución acumulada
+ggplot(df, aes(x = x, y = Hi)) +
+  geom_step(color = "#2C3E50", size = 1.2) +        # línea escalonada (CDF)
+  geom_point(color = "#E74C3C", size = 3) +         # puntos
+  scale_x_continuous(breaks = df$x) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    title = "Función de Distribución Acumulada (FDA)",
+    x = "N Practicas",
+    y = "Frecuencia relativa acumulada (Hi)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
+```
+
+## Interpretacion
+
+Los valores más frecuentes son 4 y 6 prácticas (16.5% cada uno), seguidos de 7 prácticas (15%) y 5 prácticas (14.5%).
+Los valores más bajos se observan en 3 prácticas (11%), siendo el menos frecuente.
+La distribución es bastante uniforme, sin concentraciones extremas en un solo número de prácticas.
+El acumulado indica que:
+El 54% realiza hasta 4 prácticas.
+El 85% realiza hasta 6 prácticas.
+El 100% alcanza hasta 7 prácticas.
+
+Existe una distribución equilibrada del número de prácticas, con una ligera tendencia hacia valores medios-altos (4 a 7), lo que sugiere una participación constante en la actividad sin grandes desigualdades.
+:::
+
+**Distribución de frecuencias de los encuestados según el número de lesiones**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+# Crear la tabla original
+tabla <- tibble(Lesiones = deporte$LESIONES) %>% 
+  group_by(Lesiones) %>% 
+  summarise(fi = n()) %>%
+  mutate(
+    hi = round(fi/sum(fi), 4), 
+    Porcentaje = paste0(hi*100, "%"),
+    Fi = cumsum(fi),
+    Hi = cumsum(hi)
+  )
+
+# Convertir las columnas Personas, Fi, y Hi a character para evitar conflictos
+tabla <- tabla %>% mutate(
+  Lesiones = as.character(Lesiones),
+  Fi = as.character(Fi),
+  Hi = as.character(Hi)
+)
+
+# Añadir la fila de totales, dejando Fi y Hi vacíos
+totales <- tibble(
+  Lesiones = "Total",
+  fi = sum(tabla$fi),
+  hi = round(sum(tabla$hi), 2),
+  Porcentaje = paste0(round(sum(tabla$hi) * 100, 2), "%"),
+  Fi = "",  # Puedes dejar en blanco o usar un valor numérico
+  Hi = ""   # Puedes dejar en blanco o usar un valor numérico
+)
+
+# Combinar la tabla con los totales
+tabla_final <- bind_rows(tabla, totales)
+
+# Mostrar la tabla final con kable
+tabla_final %>% 
+  knitr::kable(
+    col.names = c("N Lesiones", "fi", "hi", "Porcentaje", "Fi", "Hi"), 
+    align = c("l", "r", "r", "r", "r", "r")
+  )
+
+```
+
+## Bastones
+
+```{r}
+# valores de la variable
+x <- c(0, 1, 2, 3)
+# f.m.p.
+fx <- c(0.280, 0.210, 0.295, 0.215)
+
+# Crear un dataframe con los datos
+df <- data.frame(x = x, fx = fx)
+
+# Gráfico con ggplot2
+ggplot(df, aes(x = x, y = fx)) +
+  geom_point(shape = 18, color = "red") +
+  geom_segment(aes(xend = x, yend = 0), size = 1, color = "blue") +
+  labs(x = "N Lesiones", y = "Porcentaje", title = "Diagrama  de bastones") +
+  theme_minimal() +
+  geom_text(aes(label = fx), vjust = -0.5)
+```
+
+## Escalonado
+
+```{r}
+# Cargar librerías
+library(ggplot2)
+library(tibble)
+
+# Crear datos
+df <- tibble(
+  x = c(0, 1, 2, 3),
+  Hi = c(0.28, 0.49, 0.785, 1)
+)
+
+# Gráfica de función de distribución acumulada
+ggplot(df, aes(x = x, y = Hi)) +
+  geom_step(color = "#2C3E50", size = 1.2) +        # línea escalonada (CDF)
+  geom_point(color = "#E74C3C", size = 3) +         # puntos
+  scale_x_continuous(breaks = df$x) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    title = "Función de Distribución Acumulada (FDA)",
+    x = "N Lesiones",
+    y = "Frecuencia relativa acumulada (Hi)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
+```
+
+## Interpretacion
+
+El valor más frecuente es 2 lesiones (29.5%), seguido de 0 lesiones (28%).
+Luego aparecen 3 lesiones (21.5%) y 1 lesión (21%), con proporciones similares.
+La distribución es relativamente equilibrada, aunque con una ligera concentración en 2 lesiones.
+El acumulado muestra que:
+El 49% tiene máximo 1 lesión.
+El 78.5% tiene hasta 2 lesiones.
+El 100% alcanza hasta 3 lesiones.
+
+ESto evidencia que aunque una parte importante no presenta lesiones, la mayoría ha tenido al menos una, predominando niveles intermedios (2 lesiones), lo que sugiere una frecuencia moderada de lesiones en la población.
+:::
+
+**Distribución de frecuencias de los encuestados según la escala de BORG**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+# Crear la tabla original
+tabla <- tibble(Borg = deporte$BORG) %>% 
+  group_by(Borg) %>% 
+  summarise(fi = n()) %>%
+  mutate(
+    hi = round(fi/sum(fi), 4), 
+    Porcentaje = paste0(hi*100, "%"),
+    Fi = cumsum(fi),
+    Hi = cumsum(hi)
+  )
+
+# Convertir las columnas Personas, Fi, y Hi a character para evitar conflictos
+tabla <- tabla %>% mutate(
+  Borg = as.character(Borg),
+  Fi = as.character(Fi),
+  Hi = as.character(Hi)
+)
+
+# Añadir la fila de totales, dejando Fi y Hi vacíos
+totales <- tibble(
+  Borg = "Total",
+  fi = sum(tabla$fi),
+  hi = round(sum(tabla$hi), 2),
+  Porcentaje = paste0(round(sum(tabla$hi) * 100, 2), "%"),
+  Fi = "",  # Puedes dejar en blanco o usar un valor numérico
+  Hi = ""   # Puedes dejar en blanco o usar un valor numérico
+)
+
+# Combinar la tabla con los totales
+tabla_final <- bind_rows(tabla, totales)
+
+# Mostrar la tabla final con kable
+tabla_final %>% 
+  knitr::kable(
+    col.names = c("Escala de BORG", "fi", "hi", "Porcentaje", "Fi", "Hi"), 
+    align = c("l", "r", "r", "r", "r", "r")
+  )
+
+```
+
+## Bastones
+
+```{r}
+# valores de la variable
+x <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+# f.m.p.
+fx <- c(0.100, 0.065, 0.070, 0.100, 0.095, 0.095, 0.105, 0.065, 0.115, 0.090, 0.100)
+
+# Crear un dataframe con los datos
+df <- data.frame(x = x, fx = fx)
+
+# Gráfico con ggplot2
+ggplot(df, aes(x = x, y = fx)) +
+  geom_point(shape = 18, color = "red") +
+  geom_segment(aes(xend = x, yend = 0), size = 1, color = "blue") +
+  labs(x = "Escala de BORG", y = "Porcentaje", title = "Diagrama  de bastones") +
+  theme_minimal() +
+  geom_text(aes(label = fx), vjust = -0.5)
+```
+
+## Escalonado
+
+```{r}
+# Cargar librerías
+library(ggplot2)
+library(tibble)
+
+# Crear datos
+df <- tibble(
+  x = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+  Hi = c(0.1, 0.165, 0.235, 0.335, 0.43, 0.525, 0.63, 0.695, 0.81, 0.9, 1)
+)
+
+# Gráfica de función de distribución acumulada
+ggplot(df, aes(x = x, y = Hi)) +
+  geom_step(color = "#2C3E50", size = 1.2) +        # línea escalonada (CDF)
+  geom_point(color = "#E74C3C", size = 3) +         # puntos
+  scale_x_continuous(breaks = df$x) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    title = "Función de Distribución Acumulada (FDA)",
+    x = "Escala de BORG",
+    y = "Frecuencia relativa acumulada (Hi)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
+```
+
+## Interpretacion
+
+El valor más frecuente es 8 (11.5%), seguido de 6 (10.5%) y de 0, 3 y 10 (10% cada uno).
+Los valores menos frecuentes son 1 y 7 (6.5%).
+La distribución es bastante uniforme en toda la escala (0–10), sin concentraciones extremas en un solo nivel.
+El acumulado indica que:
+El 52.5% tiene una percepción de esfuerzo hasta nivel 5.
+El 81% está hasta nivel 8.
+El 100% alcanza el nivel máximo (10).
+
+Podemos evidenciar que predomina una percepción de esfuerzo moderada a alta, con ligera tendencia hacia valores altos (6–8), lo que sugiere que la mayoría de los participantes experimenta niveles considerables de exigencia física durante la actividad.
+:::
+
+**Distribución de frecuencias de los encuestdos según la escala EVA**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+# Crear la tabla original
+tabla <- tibble(Eva = deporte$EVA) %>% 
+  group_by(Eva) %>% 
+  summarise(fi = n()) %>%
+  mutate(
+    hi = round(fi/sum(fi), 4), 
+    Porcentaje = paste0(hi*100, "%"),
+    Fi = cumsum(fi),
+    Hi = cumsum(hi)
+  )
+
+# Convertir las columnas Personas, Fi, y Hi a character para evitar conflictos
+tabla <- tabla %>% mutate(
+  Eva = as.character(Eva),
+  Fi = as.character(Fi),
+  Hi = as.character(Hi)
+)
+
+# Añadir la fila de totales, dejando Fi y Hi vacíos
+totales <- tibble(
+  Eva = "Total",
+  fi = sum(tabla$fi),
+  hi = round(sum(tabla$hi), 2),
+  Porcentaje = paste0(round(sum(tabla$hi) * 100, 2), "%"),
+  Fi = "",  # Puedes dejar en blanco o usar un valor numérico
+  Hi = ""   # Puedes dejar en blanco o usar un valor numérico
+)
+
+# Combinar la tabla con los totales
+tabla_final <- bind_rows(tabla, totales)
+
+# Mostrar la tabla final con kable
+tabla_final %>% 
+  knitr::kable(
+    col.names = c("Escala EVA", "fi", "hi", "Porcentaje", "Fi", "Hi"), 
+    align = c("l", "r", "r", "r", "r", "r")
+  )
+
+```
+
+## Bastones
+
+```{r}
+# valores de la variable
+x <- c(0, 1, 2, 3, 4, 5)
+# f.m.p.
+fx <- c(0.140, 0.195, 0.175, 0.155, 0.155, 0.180)
+
+# Crear un dataframe con los datos
+df <- data.frame(x = x, fx = fx)
+
+# Gráfico con ggplot2
+ggplot(df, aes(x = x, y = fx)) +
+  geom_point(shape = 18, color = "red") +
+  geom_segment(aes(xend = x, yend = 0), size = 1, color = "blue") +
+  labs(x = "Escala EVA", y = "Porcentaje", title = "Diagrama  de bastones") +
+  theme_minimal() +
+  geom_text(aes(label = fx), vjust = -0.5)
+```
+
+## Escalonado
+
+```{r}
+# Cargar librerías
+library(ggplot2)
+library(tibble)
+
+# Crear datos
+df <- tibble(
+  x = c(0, 1, 2, 3, 4, 5),
+  Hi = c(0.14, 0.335, 0.51, 0.665, 0.82, 1)
+)
+
+# Gráfica de función de distribución acumulada
+ggplot(df, aes(x = x, y = Hi)) +
+  geom_step(color = "#2C3E50", size = 1.2) +        # línea escalonada (CDF)
+  geom_point(color = "#E74C3C", size = 3) +         # puntos
+  scale_x_continuous(breaks = df$x) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    title = "Función de Distribución Acumulada (FDA)",
+    x = "Escala EVA",
+    y = "Frecuencia relativa acumulada (Hi)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
+```
+
+## Interpretacion
+
+Valor más frecuente (moda): EVA = 1 (19.5%), seguido de 5 (18%) y 2 (17.5%).
+Distribución general: Bastante equilibrada entre 0 y 5, sin concentraciones extremas.
+Acumulado:
+El 51% de las personas tiene EVA ≤ 2.
+El 82% tiene EVA ≤ 4.
+Interpretación global: Predominan valores bajos a moderados, lo que sugiere que la mayoría reporta niveles relativamente bajos en la escala EVA.
+:::
+
+<br>
+
+## .Variable Continua
+
+::: callout-important
+La variable continua se tabula con intervalos
+:::
+
+<br>
+
+**Generación de intervalos EDAD**
+
+::: panel-tabset
+## Mínimo
+
+```{r}
+Min <- min(deporte$EDAD)
+Min
+```
+
+## Máximo
+
+```{r}
+Max <- max(deporte$EDAD)
+Max
+```
+
+## Rango
+
+```{r}
+R <- Max-Min
+R
+
+```
+
+## Intervalos
+
+```{r}
+m <- ceiling(1 + 3.322*log10(nrow(deporte)))
+m
+
+```
+
+## Amplitud
+
+```{r}
+A <- ceiling((R/m) * 1) / 1
+A
+```
+
+## Rango corregido
+
+```{r}
+RC <- A*m
+RC
+```
+:::
+
+::: callout-caution
+La amplitud debe tener tanto decimales como lo tienen los datos originales. Si tiene un decimal la fórmula se multiplica y se divide por 10. Si tiene dos decimales la fórmula se multiplica y se divide por 100 y así sucesivamente
+:::
+
+::: panel-tabset
+## Diferencia
+
+```{r}
+D <- RC-R
+D
+```
+
+## Mínimo corregido
+
+```{r}
+Xmin <- Min-4
+Xmin
+```
+
+## Máximo corregido
+
+```{r}
+Xmax <- Max+4
+Xmax
+```
+:::
+
+::: callout-important
+La diferencia se debe dividir en dos números lo más equitativos de tal manera que estos números tengan tantos decimales como los datos originales. Al mínimo se le resta uno de los números y al máximo se le suma el otro
+:::
+
+<br>
+
+**Distribución de frecuencias de la edad de los usuarios encuestados**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+library(dplyr)
+library(kableExtra)
+
+m1 <- (Xmin+(Xmin+A))/2
+
+interv = cut(x = deporte$EDAD, breaks = seq(Xmin, Xmax, by = A), include.lowest = TRUE)
+
+tabla <- tibble(Edad = interv) %>% 
+  group_by(Edad) %>% 
+  summarise(fi = n()) %>% 
+  mutate(hi = fi / sum(fi)) %>% 
+  mutate(
+    mi = seq(m1, by = A, length.out = n()) %>% as.character(),
+  Fi = cumsum(fi) %>% as.character(),
+  Hi = cumsum(fi / sum(fi)) %>% as.character()
+  ) %>% 
+  relocate(Edad, mi, fi)
+  
+
+# Agregar la fila total con casillas en blanco
+tabla <- tabla %>% 
+  add_row(Edad = "Total", mi = "", fi = sum(tabla$fi), hi = sum(tabla$hi), Fi = "", Hi = "")
+
+# Generar la tabla con knitr::kable y agregar título
+tabla %>% 
+  knitr::kable(
+    col.names = c("Edad", "mi", "fi", "hi", "Fi", "Hi"), 
+    align = c("l", "r", "r", "r", "r", "r")
+  ) %>% 
+  kableExtra::kable_styling(full_width = FALSE) %>% 
+  kableExtra::add_header_above(c("Distribuciones de frecuencias para la variable Edad" = 6))
+```
+
+## Histograma
+
+```{r}
+# Librerías
+library(ggplot2)
+
+# Dataframe (tus datos)
+edad <- data.frame(
+  li = c(26, 31, 36, 41, 46, 51, 56, 61, 66, 71),
+  ls = c(31, 36, 41, 46, 51, 56, 61, 66, 71, 76),
+  fi = c(29, 127, 143, 33, 33, 36, 34, 32, 31, 2)
+)
+
+# Histograma real con intervalos
+ggplot(edad) +
+  geom_rect(aes(
+    xmin = li,
+    xmax = ls,
+    ymin = 0,
+    ymax = fi
+  ),
+  fill = "steelblue",
+  color = "black"
+  ) +
+  labs(
+    title = "Histograma de la edad de los trabajadores",
+    x = "Edad",
+    y = "Frecuencia"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+```
+
+## Ojiva
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tibble)
+
+edad <- tibble(
+  li = c(26, 31, 36, 41, 46, 51, 56, 61, 66, 71),
+  ls = c(31, 36, 41, 46, 51, 56, 61, 66, 71, 76),
+  fi = c(29, 127, 143, 33, 33, 36, 34, 32, 31, 2)
+)
+
+# Calcular acumuladas
+edad <- edad %>% 
+  mutate(
+    Fi = cumsum(fi),
+    Hi = Fi / sum(fi)
+  )
+
+# Graficar ojiva
+ggplot(edad, aes(x = ls, y = Hi)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "red", size = 2) +
+  labs(
+    title = "Ojiva de la edad de los trabajadores",
+    x = "Edad (límite superior del intervalo)",
+    y = "Frecuencia acumulada relativa"
+  ) +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal()
+```
+
+## Densidad
+
+```{r}
+# Librerías
+library(dplyr)
+
+edad <- data.frame(
+  mi = c(28.5, 33.5, 38.5, 43.5, 48.5, 53.5, 58.5, 63.5, 68.5, 73.5),
+  fi = c(29, 127, 143, 33, 33, 36, 34, 32, 31, 2)
+)
+
+edad_expandida <- edad %>%
+  slice(rep(1:n(), fi))
+
+dens <- density(edad_expandida$mi)
+
+plot(dens,
+     main = "Densidad",
+     xlab = "Edad",
+     ylab = "Densidad",
+     col = "red",
+     lwd = 2)
+
+polygon(dens, col = rgb(1, 0, 0, 0.5), border = "red")
+```
+
+## Interpretación
+
+Grupo más frecuente: 44–49 años (15%), seguido de 29–34 (12.5%).
+Concentración principal: La mayoría está entre 24 y 54 años.
+Acumulado:
+El 60% tiene ≤ 44 años.
+El 75% tiene ≤ 49 años.
+Extremos: Muy pocos en los rangos más bajos (14–19: 3%) y más altos (59–64: 2.5%).
+
+Predomina una población de adultos de mediana edad, con baja representación de jóvenes y adultos mayores.
+:::
+
+**Generación de intervalos PESO**
+
+::: panel-tabset
+## Mínimo
+
+```{r}
+Min <- min(deporte$PESO)
+Min
+```
+
+## Máximo
+
+```{r}
+Max <- max(deporte$PESO)
+Max
+```
+
+## Rango
+
+```{r}
+R <- Max-Min
+R
+
+```
+
+## Intervalos
+
+```{r}
+m <- ceiling(1 + 3.322*log10(nrow(deporte)))
+m
+
+```
+
+## Amplitud
+
+```{r}
+A <- ceiling((R/m) * 1) / 1
+A
+```
+
+## Rango corregido
+
+```{r}
+RC <- A*m
+RC
+```
+:::
+
+::: callout-caution
+La amplitud debe tener tanto decimales como lo tienen los datos originales. Si tiene un decimal la fórmula se multiplica y se divide por 10. Si tiene dos decimales la fórmula se multiplica y se divide por 100 y así sucesivamente
+:::
+
+::: panel-tabset
+## Diferencia
+
+```{r}
+D <- RC-R
+D
+```
+
+## Mínimo corregido
+
+```{r}
+Xmin <- Min-4
+Xmin
+```
+
+## Máximo corregido
+
+```{r}
+Xmax <- Max+4
+Xmax
+```
+:::
+
+::: callout-important
+La diferencia se debe dividir en dos números lo más equitativos de tal manera que estos números tengan tantos decimales como los datos originales. Al mínimo se le resta uno de los números y al máximo se le suma el otro
+:::
+
+<br>
+
+**Distribución de frecuencias del peso de los usuarios encuestados**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+library(dplyr)
+library(kableExtra)
+
+m1 <- (Xmin+(Xmin+A))/2
+
+interv = cut(x = deporte$PESO, breaks = seq(Xmin, Xmax, by = A), include.lowest = TRUE)
+
+tabla <- tibble(Peso = interv) %>% 
+  group_by(Peso) %>% 
+  summarise(fi = n()) %>% 
+  mutate(hi = fi / sum(fi)) %>% 
+  mutate(
+    mi = seq(m1, by = A, length.out = n()) %>% as.character(),
+  Fi = cumsum(fi) %>% as.character(),
+  Hi = cumsum(fi / sum(fi)) %>% as.character()
+  ) %>% 
+  relocate(Peso, mi, fi)
+  
+
+# Agregar la fila total con casillas en blanco
+tabla <- tabla %>% 
+  add_row(Peso = "Total", mi = "", fi = sum(tabla$fi), hi = sum(tabla$hi), Fi = "", Hi = "")
+
+# Generar la tabla con knitr::kable y agregar título
+tabla %>% 
+  knitr::kable(
+    col.names = c("Peso", "mi", "fi", "hi", "Fi", "Hi"), 
+    align = c("l", "r", "r", "r", "r", "r")
+  ) %>% 
+  kableExtra::kable_styling(full_width = FALSE) %>% 
+  kableExtra::add_header_above(c("Distribuciones de frecuencias para la variable Peso" = 6))
+```
+
+## Histograma
+
+```{r}
+# Librerías
+library(ggplot2)
+
+# Dataframe (tus datos)
+peso <- data.frame(
+  li = c(44, 48, 52, 56, 60, 64, 68, 72, 76),
+  ls = c(48, 52, 56, 60, 64, 68, 72, 76, 80),
+  fi = c(6, 18, 22, 36, 24, 22, 33, 14, 25)
+)
+
+# Histograma real con intervalos
+ggplot(peso) +
+  geom_rect(aes(
+    xmin = li,
+    xmax = ls,
+    ymin = 0,
+    ymax = fi
+  ),
+  fill = "steelblue",
+  color = "black"
+  ) +
+  labs(
+    title = "Histograma del peso de los trabajadores",
+    x = "Peso",
+    y = "Frecuencia"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+```
+
+## Ojiva
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tibble)
+
+peso <- tibble(
+  li = c(44, 48, 52, 56, 60, 64, 68, 72, 76),
+  ls = c(48, 52, 56, 60, 64, 68, 72, 76, 80),
+  fi = c(6, 18, 22, 36, 24, 22, 33, 14, 25)
+)
+
+# Calcular acumuladas
+peso <- peso %>% 
+  mutate(
+    Fi = cumsum(fi),
+    Hi = Fi / sum(fi)
+  )
+
+# Graficar ojiva
+ggplot(peso, aes(x = ls, y = Hi)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "red", size = 2) +
+  labs(
+    title = "Ojiva del peso de los trabajadores",
+    x = "Peso (límite superior del intervalo)",
+    y = "Frecuencia acumulada relativa"
+  ) +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal()
+```
+
+## Densidad
+
+```{r}
+# Librerías
+library(dplyr)
+
+peso <- data.frame(
+  mi = c(46, 50, 54, 58, 62, 66, 70, 74, 78),
+  fi = c(6, 18, 22, 36, 24, 22, 33, 14, 25)
+)
+
+peso_expandido <- peso %>%
+  slice(rep(1:n(), fi))
+
+dens <- density(peso_expandido$mi)
+
+plot(dens,
+     main = "Densidad",
+     xlab = "Peso",
+     ylab = "Densidad",
+     col = "red",
+     lwd = 2)
+
+polygon(dens, col = rgb(1, 0, 0, 0.5), border = "red")
+```
+
+## Interpretación
+
+Rango más frecuente (moda): 56–60 kg (18%), seguido de 68–72 kg (16.5%).
+Concentración principal: La mayoría se ubica entre 56 y 72 kg.
+Acumulado:
+El 53% pesa ≤ 64 kg.
+El 80.5% pesa ≤ 72 kg.
+Extremos: Pocos casos en los rangos más bajos (44–48 kg: 3%) y más altos (72–80 kg: menor proporción).
+
+Predominan pesos medios, con ligera concentración hacia valores intermedios-altos.
+:::
+
+**Generación de intervalos CINTURA**
+
+::: panel-tabset
+## Mínimo
+
+```{r}
+Min <- min(deporte$CINTURA)
+Min
+```
+
+## Máximo
+
+```{r}
+Max <- max(deporte$CINTURA)
+Max
+```
+
+## Rango
+
+```{r}
+R <- Max-Min
+R
+
+```
+
+## Intervalos
+
+```{r}
+m <- ceiling(1 + 3.322*log10(nrow(deporte)))
+m
+
+```
+
+## Amplitud
+
+```{r}
+A <- ceiling((R/m) * 1) / 1
+A
+```
+
+## Rango corregido
+
+```{r}
+RC <- A*m
+RC
+```
+:::
+
+::: callout-caution
+La amplitud debe tener tanto decimales como lo tienen los datos originales. Si tiene un decimal la fórmula se multiplica y se divide por 10. Si tiene dos decimales la fórmula se multiplica y se divide por 100 y así sucesivamente
+:::
+
+::: panel-tabset
+## Diferencia
+
+```{r}
+D <- RC-R
+D
+```
+
+## Mínimo corregido
+
+```{r}
+Xmin <- Min-4
+Xmin
+```
+
+## Máximo corregido
+
+```{r}
+Xmax <- Max+4
+Xmax
+```
+:::
+
+::: callout-important
+La diferencia se debe dividir en dos números lo más equitativos de tal manera que estos números tengan tantos decimales como los datos originales. Al mínimo se le resta uno de los números y al máximo se le suma el otro
+:::
+
+<br>
+
+**Distribución de frecuencias de la cintura en cm de los usuarios encuestados**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+library(dplyr)
+library(kableExtra)
+
+m1 <- (Xmin+(Xmin+A))/2
+
+interv = cut(x = deporte$CINTURA, breaks = seq(Xmin, Xmax, by = A), include.lowest = TRUE)
+
+tabla <- tibble(Cintura = interv) %>% 
+  group_by(Cintura) %>% 
+  summarise(fi = n()) %>% 
+  mutate(hi = fi / sum(fi)) %>% 
+  mutate(
+    mi = seq(m1, by = A, length.out = n()) %>% as.character(),
+  Fi = cumsum(fi) %>% as.character(),
+  Hi = cumsum(fi / sum(fi)) %>% as.character()
+  ) %>% 
+  relocate(Cintura, mi, fi)
+  
+
+# Agregar la fila total con casillas en blanco
+tabla <- tabla %>% 
+  add_row(Cintura = "Total", mi = "", fi = sum(tabla$fi), hi = sum(tabla$hi), Fi = "", Hi = "")
+
+# Generar la tabla con knitr::kable y agregar título
+tabla %>% 
+  knitr::kable(
+    col.names = c("Cintura", "mi", "fi", "hi", "Fi", "Hi"), 
+    align = c("l", "r", "r", "r", "r", "r")
+  ) %>% 
+  kableExtra::kable_styling(full_width = FALSE) %>% 
+  kableExtra::add_header_above(c("Distribuciones de frecuencias para la variable Cintura" = 6))
+```
+
+## Histograma
+
+```{r}
+# Librerías
+library(ggplot2)
+
+# Dataframe (datos según la tabla completa)
+cintura <- data.frame(
+  li = c(44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144),
+  ls = c(48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148),
+  fi = c(6, 18, 22, 36, 24, 22, 33, 14, 25, 20, 18, 15, 12, 10, 9, 8, 7, 6, 5, 4, 3, 3, 2, 2, 1, 1)
+)
+
+# Histograma
+ggplot(cintura) +
+  geom_rect(aes(
+    xmin = li,
+    xmax = ls,
+    ymin = 0,
+    ymax = fi
+  ),
+  fill = "steelblue",
+  color = "black"
+  ) +
+  labs(
+    title = "Histograma de la cintura",
+    x = "Cintura",
+    y = "Frecuencia"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+```
+
+## Ojiva
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tibble)
+
+cintura <- tibble(
+  li = c(44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144),
+  ls = c(48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148),
+  fi = c(6, 18, 22, 36, 24, 22, 33, 14, 25, 20, 18, 15, 12, 10, 9, 8, 7, 6, 5, 4, 3, 3, 2, 2, 1, 1)
+)
+
+# Acumuladas
+cintura <- cintura %>% 
+  mutate(
+    Fi = cumsum(fi),
+    Hi = Fi / sum(fi)
+  )
+
+# Ojiva
+ggplot(cintura, aes(x = ls, y = Hi)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "red", size = 2) +
+  labs(
+    title = "Ojiva de la cintura",
+    x = "Cintura (límite superior)",
+    y = "Frecuencia acumulada relativa"
+  ) +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal()
+```
+
+## Densidad
+
+```{r}
+# Librerías
+library(dplyr)
+
+cintura <- data.frame(
+  mi = seq(46, 146, by = 4),
+  fi = c(6, 18, 22, 36, 24, 22, 33, 14, 25, 20, 18, 15, 12, 10, 9, 8, 7, 6, 5, 4, 3, 3, 2, 2, 1, 1)
+)
+
+# Expandir datos
+cintura_expandida <- cintura %>%
+  slice(rep(1:n(), fi))
+
+# Densidad
+dens <- density(cintura_expandida$mi)
+
+plot(dens,
+     main = "Densidad",
+     xlab = "Cintura",
+     ylab = "Densidad",
+     col = "red",
+     lwd = 2)
+
+polygon(dens, col = rgb(1, 0, 0, 0.5), border = "red")
+```
+
+## Interpretación
+
+La mayor frecuencia se encuentra en el intervalo (111, 120], con 32 casos (16%), por lo que es el rango más común.
+Aproximadamente el 63.5% de los datos está por debajo de 120, lo que indica que la mayoría se concentra en valores medios.
+Solo un 3.5% alcanza valores cercanos a 151.5, mostrando que los valores altos son poco frecuentes.
+La distribución es ligeramente concentrada en el centro, con menor presencia en los extremos.
+
+Esto nos muestra que la mayoría de las medidas de cintura se agrupan entre 93 y 129, con un pico alrededor de 111–120.
+:::
+
+**Generación de intervalos CADERA**
+
+::: panel-tabset
+## Mínimo
+
+```{r}
+Min <- min(deporte$CADERA)
+Min
+```
+
+## Máximo
+
+```{r}
+Max <- max(deporte$CADERA)
+Max
+```
+
+## Rango
+
+```{r}
+R <- Max-Min
+R
+
+```
+
+## Intervalos
+
+```{r}
+m <- ceiling(1 + 3.322*log10(nrow(deporte)))
+m
+
+```
+
+## Amplitud
+
+```{r}
+A <- ceiling((R/m) * 1) / 1
+A
+```
+
+## Rango corregido
+
+```{r}
+RC <- A*m
+RC
+```
+:::
+
+::: callout-caution
+La amplitud debe tener tanto decimales como lo tienen los datos originales. Si tiene un decimal la fórmula se multiplica y se divide por 10. Si tiene dos decimales la fórmula se multiplica y se divide por 100 y así sucesivamente
+:::
+
+::: panel-tabset
+## Diferencia
+
+```{r}
+D <- RC-R
+D
+```
+
+## Mínimo corregido
+
+```{r}
+Xmin <- Min-4
+Xmin
+```
+
+## Máximo corregido
+
+```{r}
+Xmax <- Max+4
+Xmax
+```
+:::
+
+::: callout-important
+La diferencia se debe dividir en dos números lo más equitativos de tal manera que estos números tengan tantos decimales como los datos originales. Al mínimo se le resta uno de los números y al máximo se le suma el otro
+:::
+
+<br>
+
+**Distribución de frecuencias de la cadera en cm de los usuarios encuestados**
+
+::: panel-tabset
+## Tabla
+
+```{r}
+library(dplyr)
+library(kableExtra)
+
+m1 <- (Xmin+(Xmin+A))/2
+
+interv = cut(x = deporte$CADERA, breaks = seq(Xmin, Xmax, by = A), include.lowest = TRUE)
+
+tabla <- tibble(Cadera = interv) %>% 
+  group_by(Cadera) %>% 
+  summarise(fi = n()) %>% 
+  mutate(hi = fi / sum(fi)) %>% 
+  mutate(
+    mi = seq(m1, by = A, length.out = n()) %>% as.character(),
+  Fi = cumsum(fi) %>% as.character(),
+  Hi = cumsum(fi / sum(fi)) %>% as.character()
+  ) %>% 
+  relocate(Cadera, mi, fi)
+  
+
+# Agregar la fila total con casillas en blanco
+tabla <- tabla %>% 
+  add_row(Cadera = "Total", mi = "", fi = sum(tabla$fi), hi = sum(tabla$hi), Fi = "", Hi = "")
+
+# Generar la tabla con knitr::kable y agregar título
+tabla %>% 
+  knitr::kable(
+    col.names = c("Cadera", "mi", "fi", "hi", "Fi", "Hi"), 
+    align = c("l", "r", "r", "r", "r", "r")
+  ) %>% 
+  kableExtra::kable_styling(full_width = FALSE) %>% 
+  kableExtra::add_header_above(c("Distribuciones de frecuencias para la variable Cadera" = 6))
+```
+
+## Histograma
+
+```{r}
+# Librerías
+library(ggplot2)
+
+# Dataframe
+cadera <- data.frame(
+  li = c(84, 87, 90, 93, 96, 99, 102, 105, 108),
+  ls = c(87, 90, 93, 96, 99, 102, 105, 108, 111),
+  fi = c(27, 21, 27, 28, 28, 20, 25, 13, 11)
+)
+
+# Histograma
+ggplot(cadera) +
+  geom_rect(aes(
+    xmin = li,
+    xmax = ls,
+    ymin = 0,
+    ymax = fi
+  ),
+  fill = "steelblue",
+  color = "black"
+  ) +
+  labs(
+    title = "Histograma de la cadera",
+    x = "Cadera",
+    y = "Frecuencia"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+```
+
+## Ojiva
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tibble)
+
+cadera <- tibble(
+  li = c(84, 87, 90, 93, 96, 99, 102, 105, 108),
+  ls = c(87, 90, 93, 96, 99, 102, 105, 108, 111),
+  fi = c(27, 21, 27, 28, 28, 20, 25, 13, 11)
+)
+
+# Acumuladas
+cadera <- cadera %>% 
+  mutate(
+    Fi = cumsum(fi),
+    Hi = Fi / sum(fi)
+  )
+
+# Ojiva
+ggplot(cadera, aes(x = ls, y = Hi)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "red", size = 2) +
+  labs(
+    title = "Ojiva de la cadera",
+    x = "Cadera (límite superior)",
+    y = "Frecuencia acumulada relativa"
+  ) +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal()
+```
+
+## Densidad
+
+```{r}
+# Librerías
+library(dplyr)
+
+cadera <- data.frame(
+  mi = c(82.5, 85.5, 88.5, 91.5, 94.5, 97.5, 100.5, 103.5, 106.5),
+  fi = c(27, 21, 27, 28, 28, 20, 25, 13, 11)
+)
+
+# Expandir datos
+cadera_expandida <- cadera %>%
+  slice(rep(1:n(), fi))
+
+# Densidad
+dens <- density(cadera_expandida$mi)
+
+plot(dens,
+     main = "Densidad",
+     xlab = "Cadera",
+     ylab = "Densidad",
+     col = "red",
+     lwd = 2)
+
+polygon(dens, col = rgb(1, 0, 0, 0.5), border = "red")
+```
+
+## Interpretación
+
+Los intervalos con mayor frecuencia son (93,96] y (96,99], ambos con 28 casos (14%), indicando el centro de la distribución.
+Aproximadamente el 65.5% de los datos está por debajo de 99, lo que muestra concentración en valores medios.
+Los valores extremos (por encima de 105) son poco frecuentes (≈12% en total).
+La distribución es bastante simétrica y centrada, sin concentraciones extremas marcadas.
+
+En resumen: la mayoría de las medidas de cadera se concentran entre 90 y 102, con un pico alrededor de 93–99.
+:::
+
+<br>
+
+## .Tablas de contingencia
+
+::: panel-tabset
+## Absolutas
+
+```{r}
+# Cargar las bibliotecas necesarias
+library(dplyr)
+library(readxl)
+library(kableExtra)
+
+
+
+# Crear una tabla de contingencia con DEPORTE y DESEMPEÑO
+table_deporte_desempeño <- table(deporte$DEPORTE, deporte$DESEMPEÑO)
+
+# Convertir la tabla a un data frame para facilitar el manejo de datos
+table_df <- as.data.frame.matrix(table_deporte_desempeño)
+
+# Calcular los totales de frecuencia absoluta (Total)
+table_df$Total <- rowSums(table_df)  # Totales por fila
+total_fi <- sum(table_df$Total)      # Total general
+
+# Añadir una fila de totales al final de la tabla
+table_df <- rbind(table_df, Total = c(colSums(table_deporte_desempeño), total_fi))
+
+# Mostrar la tabla con kableExtra, aplicando color solo a la fila de Totales
+table_df %>%
+  kable("html", caption = "Tabla de Frecuencias absolutas de DEPORTE vs DESEMPEÑO de los encuestados") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+                full_width = F, position = "center") %>%
+  row_spec(nrow(table_df), bold = T, color = "white", background = "green")  # Resaltar solo la fila de Totales
+```
+
+## Relativas
+
+```{r}
+# Cargar las bibliotecas necesarias
+library(dplyr)
+library(readxl)
+library(kableExtra)
+
+
+# Crear una tabla de contingencia con DEPORTE y DESEMPEÑO
+table_deporte_desempeño <- table(deporte$DEPORTE, deporte$DESEMPEÑO)
+
+# Convertir la tabla a un data frame para facilitar el manejo de datos
+table_df <- as.data.frame.matrix(table_deporte_desempeño)
+
+# Calcular el total general para las frecuencias relativas
+total_fi <- sum(table_df)  # Total general para todas las celdas
+
+# Calcular las frecuencias relativas
+table_df <- table_df / total_fi  # Dividir cada valor por el total general para obtener la frecuencia relativa
+
+# Calcular los totales de frecuencia relativa por fila y columna
+table_df$Total <- rowSums(table_df)  # Totales por fila (frecuencias relativas)
+total_column <- colSums(table_df)  # Totales por columna (frecuencias relativas)
+
+# Añadir una fila de totales al final de la tabla
+table_df <- rbind(table_df, Total = total_column)
+
+# Mostrar la tabla con kableExtra, aplicando color solo a la fila de Totales
+table_df %>%
+  kable("html", caption = "Tabla de Frecuencias Relativas de DEPORTE vs DESEMPEÑO de los encuestados") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+                full_width = F, position = "center") %>%
+  row_spec(nrow(table_df), bold = T, color = "white", background = "green")  # Resaltar solo la fila de Totales
+```
+
+## Conjuntas
+
+```{r}
+# Cargar las librerías necesarias
+library(ggplot2)
+library(dplyr)
+library(readxl)
+
+# Calcular los porcentajes de cada categoría de DESEMPEÑO dentro de cada NIVEL DE ESCOLARIDAD
+data_porcentaje <- deporte %>%
+  count(ESCOLARIDAD, DESEMPEÑO) %>%
+  group_by(ESCOLARIDAD) %>%
+  mutate(porcentaje = n / sum(n) * 100)
+
+# Crear el diagrama de barras conjuntas con porcentajes
+ggplot(data_porcentaje, aes(x = ESCOLARIDAD, y = porcentaje, fill = DESEMPEÑO)) +
+  geom_bar(stat = "identity", position = "dodge") +  # Usar "stack" si deseas barras apiladas
+  labs(title = "Distribución porcentual del desempeño por el nivel de escolaridad",
+       x = "Nivel de Escolaridad",
+       y = "Porcentaje",
+       fill = "Desempeño") +
+  theme_minimal() +
+  geom_text(aes(label = sprintf("%.1f%%", porcentaje)), 
+            position = position_dodge(0.9), 
+            vjust = -0.5, 
+            size = 3)
+```
+
+## Apiladas 1
+
+```{r}
+# Cargar las librerías necesarias
+library(ggplot2)
+library(dplyr)
+library(readxl)
+
+
+# Calcular los porcentajes de cada categoría de DESEMPEÑO dentro de cada NIVEL DE ESCOLARIDAD
+data_porcentaje <- deporte %>%
+  count(ESCOLARIDAD, DESEMPEÑO) %>%
+  group_by(ESCOLARIDAD) %>%
+  mutate(porcentaje = n / sum(n) * 100)
+
+# Crear el diagrama de barras apiladas con porcentajes
+ggplot(data_porcentaje, aes(x = ESCOLARIDAD, y = porcentaje, fill = DESEMPEÑO)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(title = "Distribución porcentual del desempeño por el nivel de escolaridad",
+       x = "Nivel de Escolaridad",
+       y = "Porcentaje",
+       fill = "Desempeño") +
+  theme_minimal() +
+  geom_text(aes(label = sprintf("%.1f%%", porcentaje)), 
+            position = position_stack(vjust = 0.5), 
+            color = "white",
+            size = 3)
+```
+
+## Apiladas 2
+
+```{r}
+# Cargar las librerías necesarias
+library(ggplot2)
+library(dplyr)
+library(readxl)
+
+
+# Calcular los porcentajes de cada categoría de DESEMPEÑO dentro de cada NIVEL DE ESCOLARIDAD
+data_porcentaje <- deporte %>%
+  count(ESCOLARIDAD, DESEMPEÑO) %>%
+  group_by(ESCOLARIDAD) %>%
+  mutate(porcentaje = n / sum(n) * 100)
+
+# Crear el diagrama de barras apiladas en forma horizontal con porcentajes
+ggplot(data_porcentaje, aes(x = ESCOLARIDAD, y = porcentaje, fill = DESEMPEÑO)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(title = "Distribución porcentual de Desempeño por Nivel de Escolaridad",
+       x = "Nivel de Escolaridad",
+       y = "Porcentaje",
+       fill = "Desempeño") +
+  theme_minimal() +
+  geom_text(aes(label = sprintf("%.1f%%", porcentaje)), 
+            position = position_stack(vjust = 0.5), 
+            color = "white",
+            size = 3) +
+  coord_flip()
+```
+
+## Interpretación
+
+La tabla muestra la distribución de 200 personas según el deporte que practican y su nivel (bajo, medio y alto). En términos generales, el nivel alto (72 personas) es el más frecuente, seguido del nivel bajo (67) y luego el medio (61), lo que indica una ligera tendencia hacia niveles más altos de desempeño.
+
+Por deporte:
+
+Atletismo presenta mayor concentración en nivel alto (12) y menor en medio (4), lo que sugiere polarización hacia niveles más altos.
+Baloncesto está bastante equilibrado, aunque destaca ligeramente el nivel bajo (13).
+Fútbol tiene mayor presencia en nivel medio (12), mostrando un perfil más centrado.
+Gimnasia está muy equilibrada entre los tres niveles (8, 9, 9).
+Natación muestra una distribución interesante, con igual cantidad en niveles bajo y alto (12 cada uno).
+Tenis tiene menor participación total (22) y distribución bastante uniforme.
+Voleibol se inclina hacia niveles medio (10) y alto (11).
+
+En conjunto, no hay un deporte con dominio absoluto de un solo nivel, pero sí se observa que varios (como atletismo, natación y voleibol) tienden hacia niveles altos. Esto sugiere una población relativamente bien distribuida, con ligera inclinación al rendimiento alto y sin desequilibrios extremos entre deportes.
+:::
