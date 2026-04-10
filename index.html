@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Santiago Botero Alejandro Castro Ciara Talero">
+<meta name="author" content="William Alejandro Castro Nossa Santiago Botero Morales Ciara Sofia Talero">
 
-<title>Distribuciones de Frecuencias – taller1</title>
+<title>DISTRIBUCIONES DE FRECUENCIAS – taller1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -56,7 +56,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -107,7 +127,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <style>
 
       .quarto-title-block .quarto-title-banner {
-        background: #3d9bba;
+        background: #98b6ed;
       }
 </style>
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
@@ -168,8 +188,8 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-left">
-      <h1 class="title">Distribuciones de Frecuencias</h1>
-            <p class="subtitle lead">taller1</p>
+      <h1 class="title">DISTRIBUCIONES DE FRECUENCIAS</h1>
+            <p class="subtitle lead">TALLER_1</p>
                       </div>
   </div>
     
@@ -178,7 +198,7 @@ window.Quarto = {
     <div class="quarto-title-meta-heading">Afiliación</div>
     
       <div class="quarto-title-meta-contents">
-      <p class="author">Santiago Botero<br>Alejandro Castro<br>Ciara Talero </p>
+      <p class="author">William Alejandro Castro Nossa<br>Santiago Botero Morales<br>Ciara Sofia Talero </p>
     </div>
     <div class="quarto-title-meta-contents">
           <p class="affiliation">
@@ -211,7 +231,7 @@ window.Quarto = {
     <h2 id="toc-title">En esta página</h2>
    
   <ul>
-  <li><a href="#cargar-paquetes" id="toc-cargar-paquetes" class="nav-link active" data-scroll-target="#cargar-paquetes"><span class="header-section-number">1</span> .Cargar paquetes</a></li>
+  <li><a href="#cargar-paquetes" id="toc-cargar-paquetes" class="nav-link active" data-scroll-target="#cargar-paquetes"><span class="header-section-number">1</span> Cargar paquetes</a></li>
   <li><a href="#introducción" id="toc-introducción" class="nav-link" data-scroll-target="#introducción"><span class="header-section-number">2</span> .Introducción</a></li>
   <li><a href="#bajar-el-dataset" id="toc-bajar-el-dataset" class="nav-link" data-scroll-target="#bajar-el-dataset"><span class="header-section-number">3</span> .Bajar el Dataset</a></li>
   <li><a href="#leer-el-dataset" id="toc-leer-el-dataset" class="nav-link" data-scroll-target="#leer-el-dataset"><span class="header-section-number">4</span> .Leer el Dataset</a></li>
@@ -244,7 +264,7 @@ window.Quarto = {
   }
 </style>
 <section id="cargar-paquetes" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> .Cargar paquetes</h1>
+<h1 data-number="1"><span class="header-section-number">1</span> Cargar paquetes</h1>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Ver código</summary>
@@ -273,13 +293,13 @@ window.Quarto = {
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear la lista de los paquetes a utilizar</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>packages <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"kableExtra"</span>, <span class="st">"psych"</span>, <span class="st">"readxl"</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>packages <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"kableExtra"</span>, <span class="st">"psych"</span>, <span class="st">"readxl"</span>, <span class="st">"stringi"</span>)</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalar y cargar los paquetes del listado anterior</span></span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">ipak</span>(packages)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p><span class="citation" data-cites="tidyverse kableExtra psych readxl">[@tidyverse; @kableExtra; @psych; @readxl]</span></p>
+<p><span class="citation" data-cites="tidyverse kableExtra psych readxl">(<a href="#ref-tidyverse" role="doc-biblioref">Wickham et&nbsp;al. 2019</a>; <a href="#ref-kableExtra" role="doc-biblioref">Zhu 2024</a>; <a href="#ref-psych" role="doc-biblioref">2026</a>; <a href="#ref-readxl" role="doc-biblioref">Wickham y Bryan 2025</a>)</span></p>
 </section>
 <section id="introducción" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> .Introducción</h1>
@@ -4139,10 +4159,24 @@ Distribuciones de frecuencias para la variable Cadera
 </div>
 
 
+
 </section>
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Referencias</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-tidyverse" class="csl-entry" role="listitem">
+Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D’Agostino McGowan, Romain François, Garrett Grolemund, et&nbsp;al. 2019. <span>«Welcome to the <span></span>tidyverse<span></span>»</span> 4: 1686. <a href="https://doi.org/10.21105/joss.01686">https://doi.org/10.21105/joss.01686</a>.
+</div>
+<div id="ref-readxl" class="csl-entry" role="listitem">
+Wickham, Hadley, y Jennifer Bryan. 2025. <span>«readxl: Read Excel Files»</span>. <a href="https://doi.org/10.32614/CRAN.package.readxl">https://doi.org/10.32614/CRAN.package.readxl</a>.
+</div>
+<div id="ref-psych" class="csl-entry" role="listitem">
+William Revelle. 2026. <span>«psych: Procedures for Psychological, Psychometric, and Personality Research»</span>. <a href="https://CRAN.R-project.org/package=psych">https://CRAN.R-project.org/package=psych</a>.
+</div>
+<div id="ref-kableExtra" class="csl-entry" role="listitem">
+Zhu, Hao. 2024. <span>«kableExtra: Construct Complex Table with ’kable’ and Pipe Syntax»</span>. <a href="https://doi.org/10.32614/CRAN.package.kableExtra">https://doi.org/10.32614/CRAN.package.kableExtra</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
@@ -4216,7 +4250,7 @@ Distribuciones de frecuencias para la variable Cadera
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/Alejoedufisica31\.github\.io\/taller1\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
